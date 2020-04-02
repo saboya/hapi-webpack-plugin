@@ -1,248 +1,98 @@
-# hapi-webpack-plugin
-
-[![Maintenance Status][status-image]][status-url] [![Dependency Status][deps-image]][deps-url] [![NPM version][npm-image]][npm-url]
+# @saboya/hapi-webpack-plugin
 
 
 [Webpack](http://webpack.github.io) middleware for [Hapi](https://github.com/hapijs/hapi). Supports HMR.
 
+This is a fork of Simon Degraeve's [hapi-webpack-plugin](https://github.com/SimonDegraeve/hapi-webpack-plugin).
+This is mostly a rewrite of the plugin using TypeScript and updating it for current versions of Webpack / Hapi, with some added features.
 
 
-## Webpack Version
+### Webpack Version
 
-Please download the appropriate version for you. 
+This was tested with Webpack 4.41. Actual compatibility is unknown.
 
-### **Hapi >= 17.x**
-* For **webpack >= 2.x** use version >= 3.0.0 of this package.
+### Hapi version
 
-### **Hapi <= 16.x**
-* For **webpack 1.x** use version < 1.3.0 of this package.
-* For **webpack 2.x** use version 2.x.x of this package.
+Tested with Hapi 19. Should be compatible with Hapi >= 17.
 
 ## Installation
 
-```js
-npm install hapi-webpack-plugin
+```
+yarn add  @saboya/hapi-webpack-plugin
 ```
 
 ## Usage
 
 See [webpack-dev-middleware](https://github.com/webpack/webpack-dev-middleware) and [webpack-hot-middleware](https://github.com/glenjamin/webpack-hot-middleware) for all available options.
 
-You can use the plugin in two ways.
+Options for `webpack-dev-middleware` are set with the `dev` key in the options object.
 
+Options for `webpack-hot-middleware` are set with the `hot` key in the options object.
 
 **1) With object as options**
-## **Hapi >= 17.x**
-```js
-/**
- * file: index.js
- */
 
-/**
- * Import dependencies
- */
-import {Server} from 'hapi';
-import Webpack from 'webpack';
-import WebpackPlugin from 'hapi-webpack-plugin';
+```typescript
+import { Server } from '@hapi/hapi';
+import { Plugin as HapiWebpackPlugin } from '@saboya/hapi-webpack-plugin';
 
-/**
- * Create server
- */
-const server = new Server({port: 3000});
-
-/**
- * Define constants
- */
-const compiler = new Webpack({
-  // webpack configuration
-  entry: 'app.js'
-});
-
-const assets = {
-  // webpack-dev-middleware options
-  // See https://github.com/webpack/webpack-dev-middleware
-}
-
-const hot = {
-  // webpack-hot-middleware options
-  // See https://github.com/glenjamin/webpack-hot-middleware
-}
-
-/**
- * Register plugin and start server
- */
-async function start() {
-  try {
-    await server.register({
-      plugin: WebpackPlugin,
-      options: {compiler, assets, hot}
-    });
-  }
-  catch (error) {
-    console.error(error);
-  }
-  
-  try {
-    server.start();
-    console.log('Server running at:', server.info.uri)
-  }
-  catch (error) {
-    console.error(error);
-  }
-}
-
-start();
-```
-
-## **Hapi <= 16.x**
-```js
-/**
- * file: index.js
- */
-
-/**
- * Import dependencies
- */
-import {Server} from 'hapi';
-import Webpack from 'webpack';
-import WebpackPlugin from 'hapi-webpack-plugin';
 
 /**
  * Create server
  */
 const server = new Server();
-server.connection({port: 3000});
-
-/**
- * Define constants
- */
-const compiler = new Webpack({
-  // webpack configuration
-  entry: 'app.js'
-});
-
-const assets = {
-  // webpack-dev-middleware options
-  // See https://github.com/webpack/webpack-dev-middleware
-}
-
-const hot = {
-  // webpack-hot-middleware options
-  // See https://github.com/glenjamin/webpack-hot-middleware
-}
 
 /**
  * Register plugin and start server
  */
-server.register({
-  register: WebpackPlugin,
-  options: {compiler, assets, hot}
-},
-error => {
-  if (error) {
-    return console.error(error);
-  }
-  server.start(() => console.log('Server running at:', server.info.uri));
-});
+async function start() {
+  await server.register({
+    plugin: HapiWebpackPlugin,
+    options: {
+      dev: {
+        publicPath: '/',
+      }, // options for webpack-dev-middleware
+      hot: {
+        overlay: false,
+      }, // options for webpack-hotmiddleware
+      webpackConfig: {
+        entry: 'src.js'
+      },
+    },
+  })
+  
+  await server.start();
+}
+
+start()
 ```
 
 **2) With path as options**
-## **Hapi >= 17**
-```js
-/**
- * file: index.js
- */
 
-/**
- * Import dependencies
- */
-import {Server} from 'hapi';
-import WebpackPlugin from 'hapi-webpack-plugin';
-
-
-/**
- * Create server
- */
-const server = new Server({port: 3000});
-
-/**
- * Register plugin and start server
- */
-async function start() {
-  try {
-    await server.register({
-      plugin: WebpackPlugin,
-      options: './webpack.config.js'
-    });
-  }
-  catch (error) {
-    console.error(error);
-  }
-  
-  try {
-    server.start();
-    console.log('Server running at:', server.info.uri)
-  }
-  catch (error) {
-    console.error(error);
-  }
-}
-
-start();
-```
-
-## **Hapi <= 16.x**
-```js
-/**
- * file: index.js
- */
-
-/**
- * Import dependencies
- */
-import {Server} from 'hapi';
-import WebpackPlugin from 'hapi-webpack-plugin';
+```typescript
+import { Server } from '@hapi/hapi';
+import { Plugin as HapiWebpackPlugin } from '@saboya/hapi-webpack-plugin';
 
 
 /**
  * Create server
  */
 const server = new Server();
-server.connection({port: 3000});
 
 /**
  * Register plugin and start server
  */
-server.register({
-  register: WebpackPlugin,
-  options: './webpack.config.js'
-},
-error => {
-  if (error) {
-    return console.error(error);
-  }
-  server.start(() => console.log('Server running at:', server.info.uri));
-});
-```
-```js
-/**
- * file: webpack.config.js
- */
+async function start() {
+  await server.register({
+    plugin: HapiWebpackPlugin,
+    options: {
+      webpackConfig: './webpack.config.js'
+    }
+  })
+  
+  await server.start();
+}
 
-/**
- * Export webpack configuration
- */
-export default {
-  entry: 'app.js',
-
-  // webpack-dev-middleware options
-  // See https://github.com/webpack/webpack-dev-middleware
-  assets: {},
-
-  // webpack-hot-middleware options
-  // See https://github.com/glenjamin/webpack-hot-middleware
-  hot: {}
-};
+start()
 ```
 
 ## Licence
