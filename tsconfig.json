@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "lib": [ "es2017"],
+    "outDir": "lib",
+    "target": "es2017",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "declaration": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "strictNullChecks": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noImplicitUseStrict": true,
+    "strictFunctionTypes": false,
+    "noUnusedLocals": true,
+    "removeComments": false,
+    "resolveJsonModule": true,
+    "preserveConstEnums": true,
+    "newLine": "lf",
+    "sourceMap": true
+  },
+  "exclude": [
+    "lib",
+    "node_modules"
+  ]
+}
