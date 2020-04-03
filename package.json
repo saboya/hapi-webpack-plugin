@@ -3,7 +3,8 @@
   "version": "0.0.2",
   "description": "Webpack middleware for Hapi.",
   "homepage": "https://github.com/saboya/hapi-webpack-plugin",
-  "main": "./lib/index.js",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
   "scripts": {
     "build": "tsc src/index.ts -d -m 'commonjs' -t 'es2017' --outDir lib --resolveJsonModule",
     "lint": "eslint --ext .js,.ts src/",
