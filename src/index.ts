@@ -1,13 +1,11 @@
-import { Plugin, Request, ResponseToolkit, Server } from '@hapi/hapi'
+import { Plugin, Server } from '@hapi/hapi'
 import * as HistoryApiFallback from 'connect-history-api-fallback'
 import * as Path from 'path'
 import * as WebpackDevMiddleware from 'webpack-dev-middleware'
 import * as WebpackHotMiddleware from 'webpack-hot-middleware'
 import * as webpack from 'webpack'
-import * as url from 'url'
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const TimeFixPlugin = require('time-fix-plugin')
+import { injectHotMiddlewareConfig, setupConnectMiddleware } from './util'
 
 declare module '@hapi/hapi' {
   interface PluginProperties {
@@ -37,10 +35,6 @@ const defaultOptions: Required<Pick<Options, 'historyApiFallback' | 'hot'>> = {
   },
 }
 
-function uriEncodeJSONObject (obj: object): string {
-  return encodeURIComponent(JSON.stringify(obj))
-}
-
 function getCompiler (options: Options & typeof defaultOptions): webpack.ICompiler {
   let config: webpack.Configuration
 
@@ -51,43 +45,7 @@ function getCompiler (options: Options & typeof defaultOptions): webpack.ICompil
     config = { ...options.webpackConfig }
   }
 
-  if (config.plugins === undefined) {
-    config.plugins = []
-  }
-
-  config.plugins.push(new TimeFixPlugin())
-  config.plugins.push(new webpack.HotModuleReplacementPlugin())
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { log, path, heartbeat, ansiColors, overlayStyles, ...rest } = options.hot
-
-  const clientOpts: Record<string, any> = { ...rest }
-
-  if (ansiColors !== undefined) {
-    clientOpts.ansiColors = uriEncodeJSONObject(ansiColors)
-  }
-
-  if (overlayStyles !== undefined) {
-    clientOpts.ansiColors = uriEncodeJSONObject(overlayStyles)
-  }
-
-  const hotMiddlewareClientParams = new url.URLSearchParams(clientOpts).toString()
-
-  const resolvedClientModule = require.resolve('webpack-hot-middleware/client.js')
-
-  const hotMiddlewareClientEntry = `${resolvedClientModule}?${hotMiddlewareClientParams}`
-
-  if (typeof config.entry === 'string') {
-    config.entry = { main: config.entry }
-  }
-
-  if (Array.isArray(config.entry)) {
-    config.entry.push(hotMiddlewareClientEntry)
-  } else if (typeof config.entry === 'object') {
-    config.entry['hapi-webpack-plugin-hmr-client'] = hotMiddlewareClientEntry
-  }
-
-  return webpack(config)
+  return webpack(injectHotMiddlewareConfig(config, options.hot))
 }
 
 export const plugin: Plugin<Options> = {
@@ -95,8 +53,6 @@ export const plugin: Plugin<Options> = {
   once: true,
   register: async (server, suppliedOptions) => {
     const options = { ...defaultOptions, ...suppliedOptions }
-
-    server.event('compilation.finished')
 
     const compilerPromise = new Promise<webpack.ICompiler>((resolve, reject) => {
       try {
@@ -127,98 +83,36 @@ export const plugin: Plugin<Options> = {
     const webpackDevMiddleware = await webpackDevMiddlewarePromise
     const webpackHotMiddleware = await webpackHotMiddlewarePromise
 
+    const validDevMiddlewarePromise = new Promise<void>((resolve, reject) => {
+      try {
+        webpackDevMiddleware.waitUntilValid(() => resolve())
+      } catch (err) {
+        reject(err)
+      }
+    })
+
     server.ext({
       type: 'onPreStop',
       method: async (_: Server) => {
-        await Promise.all([compilerPromise, webpackDevMiddlewarePromise, webpackHotMiddlewarePromise])
+        await Promise.all([
+          compilerPromise,
+          webpackDevMiddlewarePromise,
+          webpackHotMiddlewarePromise,
+          validDevMiddlewarePromise,
+        ])
 
-        const validDevMiddlewarePromise = new Promise<void>((resolve, reject) => {
-          try {
-            webpackDevMiddleware.waitUntilValid(() => resolve())
-          } catch (err) {
-            reject(err)
-          }
-        })
-
-        await validDevMiddlewarePromise
-
-        const closeDevMiddlewarePromise = new Promise<void>((resolve, reject) => {
-          try {
-            webpackDevMiddleware.close(() => resolve())
-          } catch (err) {
-            reject(err)
-          }
-        })
-
-        await closeDevMiddlewarePromise
+        return new Promise<void>((resolve) => webpackDevMiddleware.close(resolve))
       },
     })
 
     if (options?.historyApiFallback) {
-      server.ext({
-        type: 'onRequest',
-        method: async (request: Request, h: ResponseToolkit) => {
-          const { req, res } = request.raw
+      const HistoryApiFallbackMiddleware = HistoryApiFallback(options.historyApiFallbackOptions)
 
-          const setupHistoryApiFallbackMiddleware = new Promise((resolve, reject) => {
-            const handler = HistoryApiFallback(options.historyApiFallbackOptions)
-            handler(req as any, res as any, error => {
-              if (error !== undefined) {
-                reject(error)
-              }
-
-              resolve()
-            })
-          })
-
-          await setupHistoryApiFallbackMiddleware
-
-          return h.continue
-        },
-      })
+      setupConnectMiddleware(server, 'onRequest', HistoryApiFallbackMiddleware)
     }
 
-    server.ext({
-      type: 'onRequest',
-      method: async (request: Request, h: ResponseToolkit) => {
-        const { req, res } = request.raw
-
-        const setupWebpackDevMiddleware = new Promise((resolve, reject) => {
-          webpackDevMiddleware(req, res, error => {
-            if (error !== undefined) {
-              reject(error)
-            }
-
-            resolve()
-          })
-        })
-
-        await setupWebpackDevMiddleware
-
-        return h.continue
-      },
-    })
-
-    server.ext({
-      type: 'onRequest',
-      method: async (request: Request, h: ResponseToolkit) => {
-        const { req, res } = request.raw
-
-        const setupWebpackHotMiddleware = new Promise((resolve, reject) => {
-          webpackHotMiddleware(req, res, error => {
-            if (error !== undefined) {
-              reject(error)
-            }
-
-            resolve()
-          })
-        })
-
-        await setupWebpackHotMiddleware
-
-        return h.continue
-      },
-    })
+    setupConnectMiddleware(server, 'onRequest', webpackDevMiddleware)
+    setupConnectMiddleware(server, 'onRequest', webpackHotMiddleware)
 
     // Expose compiler
     server.expose('hapi-webpack-plugin', { compiler })

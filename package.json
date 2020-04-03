@@ -74,6 +74,7 @@
     "webpack-hot-middleware": "^2.25.0"
   },
   "devDependencies": {
+    "@types/connect": "^3.4.33",
     "@hapi/hapi": "^19.1.1",
     "@types/hapi__hapi": "^19.0.2",
     "@types/jest": "^25.1.4",
