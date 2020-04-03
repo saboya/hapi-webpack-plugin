@@ -73,7 +73,9 @@ function getCompiler (options: Options & typeof defaultOptions): webpack.ICompil
 
   const hotMiddlewareClientParams = new url.URLSearchParams(clientOpts).toString()
 
-  const hotMiddlewareClientEntry = `webpack-hot-middleware/client.js?${hotMiddlewareClientParams}`
+  const resolvedClientModule = require.resolve('webpack-hot-middleware/client.js')
+
+  const hotMiddlewareClientEntry = `${resolvedClientModule}?${hotMiddlewareClientParams}`
 
   if (typeof config.entry === 'string') {
     config.entry = { main: config.entry }
