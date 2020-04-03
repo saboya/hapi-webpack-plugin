@@ -1,4 +1,4 @@
-[![Build Status][travis-image]]([travis-url]) [![Maintenance Status][status-image]][status-url] [![Dependency Status][deps-image]][deps-url] [![NPM version][npm-image]][npm-url]
+[![Build Status][travis-image]][travis-url] [![Maintenance Status][status-image]][status-url] [![Dependency Status][deps-image]][deps-url] [![NPM version][npm-image]][npm-url]
 
 # @saboya/hapi-webpack-plugin
 
