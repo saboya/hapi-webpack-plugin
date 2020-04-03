@@ -37,7 +37,7 @@ const defaultOptions: Required<Pick<Options, 'historyApiFallback' | 'hot'>> = {
   },
 }
 
-function uriEncodeJSONObject (obj: object) {
+function uriEncodeJSONObject (obj: object): string {
   return encodeURIComponent(JSON.stringify(obj))
 }
 
