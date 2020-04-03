@@ -58,19 +58,11 @@ export const plugin: Plugin<Options> = {
 
     const webpackDevMiddleware = WebpackDevMiddleware(compiler, options.dev)
 
-    const validDevMiddlewarePromise = new Promise<void>((resolve) => {
-      webpackDevMiddleware.waitUntilValid(() => resolve())
-    })
-
     const webpackHotMiddleware = WebpackHotMiddleware(compiler, options.hot)
 
     server.ext({
       type: 'onPreStop',
-      method: async (_: Server) => {
-        await validDevMiddlewarePromise
-
-        return new Promise<void>((resolve) => webpackDevMiddleware.close(resolve))
-      },
+      method: async (_: Server) => new Promise<void>((resolve) => webpackDevMiddleware.close(resolve)),
     })
 
     if (options?.historyApiFallback) {
