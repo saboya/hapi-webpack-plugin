@@ -1,6 +1,6 @@
 {
   "name": "@saboya/hapi-webpack-plugin",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Webpack middleware for Hapi.",
   "homepage": "https://github.com/saboya/hapi-webpack-plugin",
   "main": "./lib/index.js",
