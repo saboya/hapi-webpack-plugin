@@ -25,11 +25,13 @@
     "email": "saboya@gmail.com",
     "url": "https://github.com/saboya"
   },
-  "contributors": [{
-    "name": "Simon Degraeve",
-    "email": "simon.degraeve@gmail.com",
-    "url": "https://github.com/SimonDegraeve"
-  }],
+  "contributors": [
+    {
+      "name": "Simon Degraeve",
+      "email": "simon.degraeve@gmail.com",
+      "url": "https://github.com/SimonDegraeve"
+    }
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/saboya/hapi-webpack-plugin/issues"
