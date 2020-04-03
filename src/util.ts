@@ -17,7 +17,7 @@ export function setupConnectMiddleware (server: Server, event: Parameters<Server
     method: async (request: Request, h: ResponseToolkit) => new Promise((resolve, reject) => {
       const { req, res } = request.raw
 
-      next(req, res, err => err === undefined ? reject(err) : resolve(h.continue))
+      next(req, res, err => err === undefined ? resolve(h.continue) : reject(err))
     }),
   })
 }
