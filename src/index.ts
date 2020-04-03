@@ -54,52 +54,20 @@ export const plugin: Plugin<Options> = {
   register: async (server, suppliedOptions) => {
     const options = { ...defaultOptions, ...suppliedOptions }
 
-    const compilerPromise = new Promise<webpack.ICompiler>((resolve, reject) => {
-      try {
-        resolve(getCompiler(options))
-      } catch (err) {
-        reject(err)
-      }
+    const compiler = getCompiler(options)
+
+    const webpackDevMiddleware = WebpackDevMiddleware(compiler, options.dev)
+
+    const validDevMiddlewarePromise = new Promise<void>((resolve) => {
+      webpackDevMiddleware.waitUntilValid(() => resolve())
     })
 
-    const compiler = await compilerPromise
-
-    const webpackDevMiddlewarePromise = new Promise<ReturnType<typeof WebpackDevMiddleware>>((resolve, reject) => {
-      try {
-        resolve(WebpackDevMiddleware(compiler, options.dev))
-      } catch (err) {
-        reject(err)
-      }
-    })
-
-    const webpackHotMiddlewarePromise = new Promise<ReturnType<typeof WebpackHotMiddleware>>((resolve, reject) => {
-      try {
-        resolve(WebpackHotMiddleware(compiler, options.hot))
-      } catch (err) {
-        reject(err)
-      }
-    })
-
-    const webpackDevMiddleware = await webpackDevMiddlewarePromise
-    const webpackHotMiddleware = await webpackHotMiddlewarePromise
-
-    const validDevMiddlewarePromise = new Promise<void>((resolve, reject) => {
-      try {
-        webpackDevMiddleware.waitUntilValid(() => resolve())
-      } catch (err) {
-        reject(err)
-      }
-    })
+    const webpackHotMiddleware = WebpackHotMiddleware(compiler, options.hot)
 
     server.ext({
       type: 'onPreStop',
       method: async (_: Server) => {
-        await Promise.all([
-          compilerPromise,
-          webpackDevMiddlewarePromise,
-          webpackHotMiddlewarePromise,
-          validDevMiddlewarePromise,
-        ])
+        await validDevMiddlewarePromise
 
         return new Promise<void>((resolve) => webpackDevMiddleware.close(resolve))
       },
