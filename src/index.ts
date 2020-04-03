@@ -4,6 +4,7 @@ import * as Path from 'path'
 import * as WebpackDevMiddleware from 'webpack-dev-middleware'
 import * as WebpackHotMiddleware from 'webpack-hot-middleware'
 import * as webpack from 'webpack'
+import * as url from 'url'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const TimeFixPlugin = require('time-fix-plugin')
@@ -16,6 +17,9 @@ declare module '@hapi/hapi' {
   }
 }
 
+type HotMiddlewareServerOptions = Pick<WebpackHotMiddleware.Options, 'log' | 'path' | 'heartbeat'>
+type HotMiddlewareClientOptions = Exclude<WebpackHotMiddleware.Options, 'log' | 'path' | 'heartbeat'>
+
 type WebpackConfigSource = string | webpack.Configuration;
 
 export interface Options {
@@ -23,21 +27,28 @@ export interface Options {
   historyApiFallbackOptions?: HistoryApiFallback.Options
   webpackConfig: WebpackConfigSource
   dev?: WebpackDevMiddleware.Options
-  hot?: WebpackHotMiddleware.Options
+  hot?: HotMiddlewareServerOptions & HotMiddlewareClientOptions
 }
 
-const defaultOptions: Required<Pick<Options, 'historyApiFallback'>> = {
+const defaultOptions: Required<Pick<Options, 'historyApiFallback' | 'hot'>> = {
   historyApiFallback: false,
+  hot: {
+    reload: true,
+  },
 }
 
-function getCompiler (source: WebpackConfigSource): webpack.ICompiler {
+function uriEncodeJSONObject (obj: object) {
+  return encodeURIComponent(JSON.stringify(obj))
+}
+
+function getCompiler (options: Options & typeof defaultOptions): webpack.ICompiler {
   let config: webpack.Configuration
 
-  if (typeof source === 'string') {
-    const configPath = Path.resolve(process.cwd(), source)
+  if (typeof options.webpackConfig === 'string') {
+    const configPath = Path.resolve(process.cwd(), options.webpackConfig)
     config = require(configPath) as webpack.Configuration
   } else {
-    config = { ...source }
+    config = { ...options.webpackConfig }
   }
 
   if (config.plugins === undefined) {
@@ -47,14 +58,31 @@ function getCompiler (source: WebpackConfigSource): webpack.ICompiler {
   config.plugins.push(new TimeFixPlugin())
   config.plugins.push(new webpack.HotModuleReplacementPlugin())
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { log, path, heartbeat, ansiColors, overlayStyles, ...rest } = options.hot
+
+  const clientOpts: Record<string, any> = { ...rest }
+
+  if (ansiColors !== undefined) {
+    clientOpts.ansiColors = uriEncodeJSONObject(ansiColors)
+  }
+
+  if (overlayStyles !== undefined) {
+    clientOpts.ansiColors = uriEncodeJSONObject(overlayStyles)
+  }
+
+  const hotMiddlewareClientParams = new url.URLSearchParams(clientOpts).toString()
+
+  const hotMiddlewareClientEntry = `webpack-hot-middleware/client.js?${hotMiddlewareClientParams}`
+
   if (typeof config.entry === 'string') {
-    config.entry = [config.entry]
+    config.entry = { main: config.entry }
   }
 
   if (Array.isArray(config.entry)) {
-    config.entry.push('webpack-hot-middleware/client')
+    config.entry.push(hotMiddlewareClientEntry)
   } else if (typeof config.entry === 'object') {
-    config.entry['hapi-webpack-plugin-hmr-client'] = 'webpack-hot-middleware/client.js'
+    config.entry['hapi-webpack-plugin-hmr-client'] = hotMiddlewareClientEntry
   }
 
   return webpack(config)
@@ -70,7 +98,7 @@ export const plugin: Plugin<Options> = {
 
     const compilerPromise = new Promise<webpack.ICompiler>((resolve, reject) => {
       try {
-        resolve(getCompiler(options.webpackConfig))
+        resolve(getCompiler(options))
       } catch (err) {
         reject(err)
       }
