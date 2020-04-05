@@ -51,7 +51,7 @@ function getCompiler (options: Options & typeof defaultOptions): webpack.ICompil
 export const plugin: Plugin<Options> = {
   name: 'hapi-webpack-plugin',
   once: true,
-  register: async (server, suppliedOptions) => {
+  register: (server, suppliedOptions) => {
     const options = { ...defaultOptions, ...suppliedOptions }
 
     const compiler = getCompiler(options)
