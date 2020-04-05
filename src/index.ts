@@ -75,6 +75,6 @@ export const plugin: Plugin<Options> = {
     setupConnectMiddleware(server, 'onRequest', webpackHotMiddleware)
 
     // Expose compiler
-    server.expose('hapi-webpack-plugin', { compiler })
+    server.expose('compiler', compiler)
   },
 }

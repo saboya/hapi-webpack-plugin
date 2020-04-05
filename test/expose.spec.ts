@@ -22,7 +22,9 @@ describe('basic plugin test', () => {
 
     const compiler = server.plugins['hapi-webpack-plugin'].compiler
 
-    expect(compiler).not.toBeNull()
+    expect(compiler).not.toBeUndefined()
+    expect(compiler.run).toBeInstanceOf(Function)
+    expect(compiler.watch).toBeInstanceOf(Function)
 
     await server.stop()
   })
