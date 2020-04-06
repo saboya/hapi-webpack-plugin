@@ -10,7 +10,7 @@ import { injectHotMiddlewareConfig, setupConnectMiddleware } from './util'
 declare module '@hapi/hapi' {
   interface PluginProperties {
     'hapi-webpack-plugin': {
-      compiler: webpack.ICompiler
+      compiler: webpack.Compiler
     }
   }
 }
@@ -35,7 +35,7 @@ const defaultOptions: Required<Pick<Options, 'historyApiFallback' | 'hot'>> = {
   },
 }
 
-function getCompiler (options: Options & typeof defaultOptions): webpack.ICompiler {
+function getCompiler (options: Options & typeof defaultOptions): webpack.Compiler {
   let config: webpack.Configuration
 
   if (typeof options.webpackConfig === 'string') {

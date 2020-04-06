@@ -1,5 +1,6 @@
 import * as Hapi from '@hapi/hapi'
 import { vol } from 'memfs'
+import * as webpack from 'webpack'
 import { BaseConfig } from './util/webpack'
 import * as HapiWebpackPlugin from '../src'
 
@@ -23,8 +24,7 @@ describe('basic plugin test', () => {
     const compiler = server.plugins['hapi-webpack-plugin'].compiler
 
     expect(compiler).not.toBeUndefined()
-    expect(compiler.run).toBeInstanceOf(Function)
-    expect(compiler.watch).toBeInstanceOf(Function)
+    expect(compiler).toBeInstanceOf(webpack.Compiler)
 
     await server.stop()
   })
