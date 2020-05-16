@@ -50,12 +50,12 @@ async function start() {
   await server.register({
     plugin: HapiWebpackPlugin,
     options: {
-      dev: {
+      dev: { // options for webpack-dev-middleware
         publicPath: '/',
-      }, // options for webpack-dev-middleware
+      }, // options for webpack-hotmiddleware
       hot: {
         overlay: false,
-      }, // options for webpack-hotmiddleware
+      },
       webpackConfig: {
         entry: 'src.js'
       },
