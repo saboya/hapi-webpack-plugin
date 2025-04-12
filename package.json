@@ -6,10 +6,10 @@
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "scripts": {
-    "build": "tsc src/index.ts -d -m 'commonjs' -t 'es2017' --outDir lib --resolveJsonModule",
-    "lint": "eslint --ext .js,.ts src/",
-    "prepublishOnly": "yarn run lint && yarn test && yarn run build",
-    "test": "jest --ci --reporters=default --runInBand --detectOpenHandles"
+    "build": "NODE_OPTIONS=--openssl-legacy-provider tsc src/index.ts -d -m 'commonjs' -t 'es2017' --outDir lib --resolveJsonModule",
+    "lint": "NODE_OPTIONS=--openssl-legacy-provider eslint --ext .js,.ts src/",
+    "prepublishOnly": "npm run lint && npm test && npm run build",
+    "test": "NODE_OPTIONS=--openssl-legacy-provider jest --ci --reporters=default --runInBand --detectOpenHandles"
   },
   "repository": {
     "type": "git",
