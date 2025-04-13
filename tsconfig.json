@@ -13,7 +13,6 @@
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
-    "noImplicitUseStrict": true,
     "strictFunctionTypes": false,
     "noUnusedLocals": true,
     "removeComments": false,
@@ -22,8 +21,12 @@
     "newLine": "lf",
     "sourceMap": true
   },
+  "include": [
+    "./src/**/*.ts"
+  ],
   "exclude": [
     "lib",
-    "node_modules"
+    "node_modules",
+    "**/*.d.ts"
   ]
 }

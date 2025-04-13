@@ -1,7 +1,7 @@
 import { Request, ResponseToolkit, Server } from '@hapi/hapi'
 import { NextHandleFunction } from 'connect'
 import * as webpack from 'webpack'
-import { Options as HotMiddlewareOptions } from 'webpack-hot-middleware'
+import { ClientOptions, MiddlewareOptions } from 'webpack-hot-middleware'
 import * as url from 'url'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -22,7 +22,7 @@ export function setupConnectMiddleware (server: Server, event: Parameters<Server
   })
 }
 
-export function injectHotMiddlewareConfig (suppliedConfig: webpack.Configuration, options: HotMiddlewareOptions): webpack.Configuration {
+export function injectHotMiddlewareConfig (suppliedConfig: webpack.Configuration, options: ClientOptions & MiddlewareOptions): webpack.Configuration {
   const config = { ...suppliedConfig }
 
   if (config.plugins === undefined) {
