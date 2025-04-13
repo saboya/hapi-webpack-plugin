@@ -1,11 +1,11 @@
 import { Plugin, Server } from '@hapi/hapi'
-import * as HistoryApiFallback from 'connect-history-api-fallback'
+import HistoryApiFallback from 'connect-history-api-fallback'
 import * as Path from 'path'
 import type { Options as WebpackDevMiddlewareOptions } from 'webpack-dev-middleware'
-import * as WebpackDevMiddleware from 'webpack-dev-middleware'
-import * as WebpackHotMiddleware from 'webpack-hot-middleware'
+import WebpackDevMiddleware from 'webpack-dev-middleware'
+import WebpackHotMiddleware from 'webpack-hot-middleware'
 import type { IncomingMessage, ServerResponse } from 'node:http'
-import * as webpack from 'webpack'
+import webpack from 'webpack'
 
 import { injectHotMiddlewareConfig, setupConnectMiddleware } from './util'
 

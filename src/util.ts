@@ -4,7 +4,7 @@ import * as webpack from 'webpack'
 import { ClientOptions, MiddlewareOptions } from 'webpack-hot-middleware'
 import * as url from 'url'
 
-const TimeFixPlugin = require('time-fix-plugin')
+import TimeFixPlugin from 'time-fix-plugin'
 
 function uriEncodeJSONObject(obj: object): string {
   return encodeURIComponent(JSON.stringify(obj))

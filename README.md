@@ -1,4 +1,4 @@
-[![Build Status][travis-image]][travis-url] [![Maintenance Status][status-image]][status-url] [![Dependency Status][deps-image]][deps-url] [![NPM version][npm-image]][npm-url]
+[![Build Status][workflow-image]][workflow-url] [![Maintenance Status][status-image]][status-url] [![NPM version][npm-image]][npm-url]
 
 # @saboya/hapi-webpack-plugin
 
@@ -121,14 +121,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-[travis-url]: https://travis-ci.org/saboya/hapi-webpack-plugin
-[travis-image]: https://travis-ci.org/saboya/hapi-webpack-plugin.svg?branch=master
+[workflow-url]: https://github.com/saboya/hapi-webpack-plugin/actions/workflows/node.js.yml
+[workflow-image]: https://github.com/saboya/hapi-webpack-plugin/actions/workflows/node.js.yml/badge.svg?branch=master
 
 [npm-url]: https://npmjs.org/package/@saboya/hapi-webpack-plugin
 [npm-image]: http://img.shields.io/npm/v/@saboya/hapi-webpack-plugin.svg?style=flat-square
-
-[deps-url]: https://david-dm.org/saboya/hapi-webpack-plugin
-[deps-image]: https://img.shields.io/david/saboya/hapi-webpack-plugin.svg?style=flat-square
 
 [status-url]: https://github.com/saboya/hapi-webpack-plugin/pulse
 [status-image]: http://img.shields.io/badge/status-maintained-brightgreen.svg?style=flat-square
