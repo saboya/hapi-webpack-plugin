@@ -19,7 +19,6 @@ describe('basic plugin test', () => {
       options: BaseConfig,
     }])
 
-    // @ts-ignore
     const compiler = server.plugins['hapi-webpack-plugin'].compiler
 
     expect(compiler).not.toBeUndefined()

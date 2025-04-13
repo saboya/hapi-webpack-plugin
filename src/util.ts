@@ -4,14 +4,13 @@ import * as webpack from 'webpack'
 import { ClientOptions, MiddlewareOptions } from 'webpack-hot-middleware'
 import * as url from 'url'
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const TimeFixPlugin = require('time-fix-plugin')
 
-function uriEncodeJSONObject (obj: object): string {
+function uriEncodeJSONObject(obj: object): string {
   return encodeURIComponent(JSON.stringify(obj))
 }
 
-export function setupConnectMiddleware (server: Server, event: Parameters<Server['ext']>[0], next: RequestHandler): void {
+export function setupConnectMiddleware(server: Server, event: Parameters<Server['ext']>[0], next: RequestHandler): void {
   server.ext({
     type: event,
     method: async (request: Request, h: ResponseToolkit) => new Promise((resolve, reject) => {
@@ -27,14 +26,15 @@ export function setupConnectMiddleware (server: Server, event: Parameters<Server
         if (maybePromise?.then !== undefined) {
           maybePromise.catch(reject)
         }
-      } catch (error) {
+      }
+      catch (error) {
         reject(error)
       }
     }),
   })
 }
 
-export function injectHotMiddlewareConfig (suppliedConfig: webpack.Configuration, options: ClientOptions & MiddlewareOptions): webpack.Configuration {
+export function injectHotMiddlewareConfig(suppliedConfig: webpack.Configuration, options: ClientOptions & MiddlewareOptions): webpack.Configuration {
   const config = { ...suppliedConfig }
 
   if (config.plugins === undefined) {
@@ -44,9 +44,9 @@ export function injectHotMiddlewareConfig (suppliedConfig: webpack.Configuration
   config.plugins.push(new TimeFixPlugin())
   config.plugins.push(new webpack.HotModuleReplacementPlugin())
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { log, path, heartbeat, ansiColors, overlayStyles, ...rest } = options
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const clientOpts: Record<string, any> = { ...rest }
 
   if (ansiColors !== undefined) {
@@ -69,7 +69,8 @@ export function injectHotMiddlewareConfig (suppliedConfig: webpack.Configuration
 
   if (Array.isArray(config.entry)) {
     config.entry.push(hotMiddlewareClientEntry)
-  } else if (typeof config.entry === 'object') {
+  }
+  else if (typeof config.entry === 'object') {
     config.entry['hapi-webpack-plugin-hmr-client'] = hotMiddlewareClientEntry
   }
 
