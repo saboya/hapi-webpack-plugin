@@ -1,5 +1,5 @@
 import { Request, ResponseToolkit, Server } from '@hapi/hapi'
-import { NextHandleFunction } from 'connect'
+import { Request as ExpressRequest, Response as ExpressServerResponse, RequestHandler } from 'express-serve-static-core'
 import * as webpack from 'webpack'
 import { ClientOptions, MiddlewareOptions } from 'webpack-hot-middleware'
 import * as url from 'url'
@@ -11,13 +11,25 @@ function uriEncodeJSONObject (obj: object): string {
   return encodeURIComponent(JSON.stringify(obj))
 }
 
-export function setupConnectMiddleware (server: Server, event: Parameters<Server['ext']>[0], next: NextHandleFunction): void {
+export function setupConnectMiddleware (server: Server, event: Parameters<Server['ext']>[0], next: RequestHandler): void {
   server.ext({
     type: event,
     method: async (request: Request, h: ResponseToolkit) => new Promise((resolve, reject) => {
       const { req, res } = request.raw
 
-      next(req, res, err => err === undefined ? resolve(h.continue) : reject(err))
+      try {
+        const maybePromise = next(
+          req as unknown as ExpressRequest,
+          res as unknown as ExpressServerResponse,
+          err => err === undefined ? resolve(h.continue) : reject(err),
+        )
+
+        if (maybePromise?.then !== undefined) {
+          maybePromise.catch(reject)
+        }
+      } catch (error) {
+        reject(error)
+      }
     }),
   })
 }
