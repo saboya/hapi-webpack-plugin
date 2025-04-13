@@ -10,10 +10,8 @@
     "lint": "eslint --ext .js,.ts src/",
     "prepublishOnly": "npm run lint && npm test && npm run build",
     "test": "jest --ci --reporters=default --runInBand --detectOpenHandles",
-    "test:hapi20": "cross-env HAPI_VERSION=20 WEBPACK_VERSION=5 npm test",
-    "test:hapi21": "cross-env HAPI_VERSION=21 WEBPACK_VERSION=5 npm test",
-    "test:webpack4": "cross-env HAPI_VERSION=21 WEBPACK_VERSION=4 npm test",
-    "test:webpack5": "cross-env HAPI_VERSION=21 WEBPACK_VERSION=5 npm test"
+    "test:hapi20": "cross-env HAPI_VERSION=20 npm test",
+    "test:hapi21": "cross-env HAPI_VERSION=21 npm test"
   },
   "repository": {
     "type": "git",
@@ -49,8 +47,7 @@
     "webpack-hot-middleware": "^2.26.1"
   },
   "peerDependencies": {
-    "@hapi/hapi": "20.x || 21.x",
-    "webpack": "4.x || 5.x"
+    "@hapi/hapi": "20.x || 21.x"
   },
   "devDependencies": {
     "@eslint/js": "^9.24.0",
@@ -74,8 +71,6 @@
     "ts-jest": "^29.3.2",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.29.1",
-    "unionfs": "^4.5.4",
-    "webpack4": "npm:webpack@^4.47.0",
-    "webpack5": "npm:webpack@^5.99.5"
+    "unionfs": "^4.5.4"
   }
 }

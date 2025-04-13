@@ -32,6 +32,5 @@ module.exports = {
   setupFiles: [
     '<rootDir>/test/setup/fs.ts',
     '<rootDir>/test/setup/hapiVersion.ts',
-    '<rootDir>/test/setup/webpack.ts',
   ],
 }
