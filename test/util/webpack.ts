@@ -11,7 +11,6 @@ export const BaseConfig: HapiWebpackPlugin.Options = {
   },
   webpackConfig: {
     infrastructureLogging: {
-      appendOnly: true,
       level: 'log',
     },
     mode: 'development',

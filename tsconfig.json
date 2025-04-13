@@ -26,6 +26,7 @@
     "sourceMap": true,
     "types": [
       "jest",
+      "node",
       "./types/time-fix-plugin.d.ts"
     ]
   },

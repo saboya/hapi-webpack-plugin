@@ -1,18 +1,18 @@
 const hapiVersion = process.env.HAPI_VERSION
 
-let hapiPath = './node_modules/hapi' + hapiVersion;
+let hapiPath = './node_modules/hapi' + hapiVersion
 
 if (hapiVersion === '20') {
-  hapiPath = './node_modules/@types/hapi__hapi';
+  hapiPath = './node_modules/@types/hapi__hapi'
 }
 
 /** @type {import('ts-jest').JestConfigWithTsJest} **/
 module.exports = {
-  testEnvironment: "node",
+  testEnvironment: 'node',
   transform: {
-    "^.+\.tsx?$": ["ts-jest",{
+    '^.+\.tsx?$': ['ts-jest', {
       diagnostics: {
-        pathRegex: "\\.(spec|test)\\.ts$",
+        pathRegex: '\\.(spec|test)\\.ts$',
       },
       tsconfig: {
         paths: {
@@ -21,16 +21,17 @@ module.exports = {
       },
     }],
   },
-  roots: ["<rootDir>/test"],
+  roots: ['<rootDir>/test'],
   collectCoverage: true,
   collectCoverageFrom: [
-    "src/**/*.{ts,js}"
+    'src/**/*.{ts,js}',
   ],
   coverageReporters: [
-    "text"
+    'text',
   ],
   setupFiles: [
     '<rootDir>/test/setup/fs.ts',
     '<rootDir>/test/setup/hapiVersion.ts',
+    '<rootDir>/test/setup/webpack.ts',
   ],
-};
+}

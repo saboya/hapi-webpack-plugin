@@ -66,8 +66,9 @@ export const plugin: Plugin<Options> = {
         if (err === null || err === undefined) {
           resolve()
         }
-
-        reject(err)
+        else {
+          reject(err)
+        }
       })),
     })
 

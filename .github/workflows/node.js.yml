@@ -23,9 +23,13 @@ jobs:
         hapi-version:
           - 20
           - 21
+        webpack-version:
+          - 4
+          - 5
 
     env:
       HAPI_VERSION: ${{ matrix.hapi-version }}
+      WEBPACK_VERSION: ${{ matrix.webpack-version }}
     steps:
     - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
