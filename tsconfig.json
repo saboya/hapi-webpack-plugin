@@ -1,5 +1,8 @@
 {
   "compilerOptions": {
+    "paths": {
+      "@hapi/hapi": ["./node_modules/hapi21"],
+    },
     "lib": [ "es2017"],
     "outDir": "lib",
     "target": "es2017",

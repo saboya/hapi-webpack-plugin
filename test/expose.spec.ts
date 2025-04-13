@@ -4,8 +4,6 @@ import * as webpack from 'webpack'
 import { BaseConfig } from './util/webpack'
 import * as HapiWebpackPlugin from '../src'
 
-jest.mock('fs')
-
 beforeEach(() => {
   vol.reset()
 
@@ -21,6 +19,7 @@ describe('basic plugin test', () => {
       options: BaseConfig,
     }])
 
+    // @ts-ignore
     const compiler = server.plugins['hapi-webpack-plugin'].compiler
 
     expect(compiler).not.toBeUndefined()

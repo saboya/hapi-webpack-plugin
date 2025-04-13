@@ -3,8 +3,6 @@ import { vol } from 'memfs'
 import { BaseConfig } from './util/webpack'
 import * as HapiWebpackPlugin from '../src'
 
-jest.mock('fs')
-
 beforeEach(() => {
   vol.reset()
 
