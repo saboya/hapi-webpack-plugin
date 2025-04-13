@@ -67,22 +67,19 @@
     ]
   },
   "dependencies": {
-    "connect-history-api-fallback": "^1.6.0",
+    "connect-history-api-fallback": "^2.0.0",
     "time-fix-plugin": "^2.0.6",
-    "webpack": "^4.41.10",
-    "webpack-dev-middleware": "^3.7.2",
-    "webpack-hot-middleware": "^2.25.0"
+    "webpack": "^5.99.5",
+    "webpack-dev-middleware": "^5.3.4",
+    "webpack-hot-middleware": "^2.26.1"
   },
   "devDependencies": {
-    "@types/connect": "^3.4.33",
     "@hapi/hapi": "^19.1.1",
+    "@types/connect": "^3.4.38",
+    "@types/connect-history-api-fallback": "^1.5.4",
     "@types/hapi__hapi": "^19.0.2",
     "@types/jest": "^25.1.4",
-    "@types/webpack": "^4.41.10",
-    "@types/webpack-dev-middleware": "^3.7.0",
-    "@types/webpack-dev-server": "^3.10.1",
     "@types/webpack-hot-middleware": "^2.25.0",
-    "@types/webpack-merge": "^4.1.5",
     "@typescript-eslint/eslint-plugin": "^2.22.0",
     "@typescript-eslint/parser": "^2.22.0",
     "eslint": "^6.8.0",

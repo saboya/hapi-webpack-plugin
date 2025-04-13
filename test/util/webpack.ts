@@ -2,7 +2,6 @@ import * as HapiWebpackPlugin from '../../src'
 
 export const BaseConfig: HapiWebpackPlugin.Options = {
   dev: {
-    logLevel: 'silent',
     publicPath: '/',
     stats: 'verbose',
     writeToDisk: true,
@@ -11,6 +10,10 @@ export const BaseConfig: HapiWebpackPlugin.Options = {
     log: false,
   },
   webpackConfig: {
+    infrastructureLogging: {
+      appendOnly: true,
+      level: 'log',
+    },
     mode: 'development',
     target: 'web',
     stats: 'verbose',

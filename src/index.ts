@@ -1,6 +1,7 @@
 import { Plugin, Server } from '@hapi/hapi'
 import * as HistoryApiFallback from 'connect-history-api-fallback'
 import * as Path from 'path'
+import type { Options as WebpackDevMiddlewareOptions } from 'webpack-dev-middleware'
 import * as WebpackDevMiddleware from 'webpack-dev-middleware'
 import * as WebpackHotMiddleware from 'webpack-hot-middleware'
 import * as webpack from 'webpack'
@@ -15,17 +16,14 @@ declare module '@hapi/hapi' {
   }
 }
 
-type HotMiddlewareServerOptions = Pick<WebpackHotMiddleware.Options, 'log' | 'path' | 'heartbeat'>
-type HotMiddlewareClientOptions = Exclude<WebpackHotMiddleware.Options, 'log' | 'path' | 'heartbeat'>
-
 type WebpackConfigSource = string | webpack.Configuration;
 
 export interface Options {
   historyApiFallback?: boolean
   historyApiFallbackOptions?: HistoryApiFallback.Options
   webpackConfig: WebpackConfigSource
-  dev?: WebpackDevMiddleware.Options
-  hot?: HotMiddlewareServerOptions & HotMiddlewareClientOptions
+  dev?: WebpackDevMiddlewareOptions<any, any>
+  hot?: WebpackHotMiddleware.MiddlewareOptions & WebpackHotMiddleware.ClientOptions
 }
 
 const defaultOptions: Required<Pick<Options, 'historyApiFallback' | 'hot'>> = {
@@ -62,7 +60,13 @@ export const plugin: Plugin<Options> = {
 
     server.ext({
       type: 'onPreStop',
-      method: async (_: Server) => new Promise<void>((resolve) => webpackDevMiddleware.close(resolve)),
+      method: async (_: Server) => new Promise<void>((resolve, reject) => webpackDevMiddleware.close((err) => {
+        if (err === null || err === undefined) {
+          resolve()
+        }
+
+        reject(err)
+      })),
     })
 
     if (options?.historyApiFallback) {

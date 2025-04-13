@@ -26,6 +26,8 @@ describe('basic plugin test', () => {
     expect(compiler).not.toBeUndefined()
     expect(compiler).toBeInstanceOf(webpack.Compiler)
 
+    await server.start()
+
     await server.stop()
   })
 })
